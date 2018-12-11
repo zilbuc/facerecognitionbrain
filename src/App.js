@@ -7,16 +7,15 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition.js';
 import Signin from './components/Signin/Signin.js';
 import Register from './components/Register/Register.js';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import './App.css';
 
 const particlesOptions = {
   "particles": {
       "number": {
-        "value": 100,
+        "value": 12,
         "density": {
           "enable": true,
-          "value_area": 660
+          "value_area": 181
         }
       },
       "color": {
@@ -121,10 +120,6 @@ const particlesOptions = {
     "retina_detect": true
 }
 
-const app = new Clarifai.App({
-  apiKey: '7e9cf2979abe4fbc9a61d69a94e1aaea'
-});
-
 const initialState = {
   input: '',
   imageUrl: '',
@@ -169,10 +164,14 @@ class App extends Component {
 
   onPictureSubmit = () => {
     this.setState({imageUrl: this.state.input})
-    app.models
-      .predict(
-        Clarifai.FACE_DETECT_MODEL,
-        this.state.input)
+      fetch('http://localhost:3000/imageurl', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          input: this.state.input
+        })
+      })
+      .then(response => response.json())
       .then(response => {
         if (response) {
           fetch('http://localhost:3000/image', {
